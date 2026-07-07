@@ -16,6 +16,7 @@ const DatabaseConnectionPage = () => {
     });
     const [testing, setTesting] = useState(false);
     const [saving, setSaving] = useState(false);
+    const [connectionStatus, setConnectionStatus] = useState(null);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
