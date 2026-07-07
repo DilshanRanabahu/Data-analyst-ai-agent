@@ -13,8 +13,10 @@ class FirestoreService:
         try:
             # Check if already initialized
             if not firebase_admin._apps:
-                # Path relative to python-backend/services/ -> ../../credentials/
-                cred_path = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), 'credentials', 'firebase-admin-key.json')
+                # Path is /app/credentials in docker, or ../credentials locally
+                cred_path = os.environ.get('FIREBASE_CREDENTIALS_PATH', '/app/credentials/firebase-admin-key.json')
+                if not os.path.exists(cred_path):
+                    cred_path = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), 'credentials', 'firebase-admin-key.json')
                 
                 if os.path.exists(cred_path):
                     cred = credentials.Certificate(cred_path)
