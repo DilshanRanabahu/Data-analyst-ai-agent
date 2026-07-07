@@ -49,11 +49,15 @@ const DatabaseConnectionPage = () => {
 
             if (data.success) {
                 toast.success('Connection successful!');
+                setConnectionStatus('success');
             } else {
-                toast.error(data.message || 'Connection failed');
+                toast.error('We could not connect to your database. Please check the details and try again.');
+                setConnectionStatus('error');
             }
         } catch (error) {
-            toast.error('Error testing connection: ' + error.message);
+            console.error('Error testing connection:', error);
+            toast.error('We could not test the connection. Please make sure the database is running and accessible.');
+            setConnectionStatus('error');
         } finally {
             setTesting(false);
         }
@@ -89,14 +93,15 @@ const DatabaseConnectionPage = () => {
 
             const data = await response.json();
 
-            if (response.ok && data.id) {
-                toast.success('Database connection saved!');
-                navigate('/unified-chat');
+            if (data.success) {
+                toast.success('Database connected successfully!');
+                navigate('/dashboard');
             } else {
-                toast.error('Failed to save connection');
+                toast.error('We could not save your database connection. Please try again.');
             }
         } catch (error) {
-            toast.error('Error saving connection: ' + error.message);
+            console.error('Error saving connection:', error);
+            toast.error('There was a problem saving your connection. Please try again later.');
         } finally {
             setSaving(false);
         }

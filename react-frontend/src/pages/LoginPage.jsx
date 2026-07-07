@@ -45,6 +45,17 @@ const LoginPage = () => {
                     {isLogin ? 'Welcome Back' : 'Create Account'}
                 </h2>
 
+                {/* Demo Credentials */}
+                {isLogin && (
+                    <div className="mb-6 p-4 bg-blue-50 border border-blue-100 rounded-lg">
+                        <p className="text-sm text-blue-800 font-semibold mb-2">Demo Credentials:</p>
+                        <div className="text-xs text-blue-700 space-y-1 font-mono bg-blue-100/50 p-2 rounded">
+                            <div>Email: <span className="font-bold select-all">praveendilshann@gmail.com</span></div>
+                            <div>Password: <span className="font-bold select-all">MAX10k001</span></div>
+                        </div>
+                    </div>
+                )}
+
                 {/* Form */}
                 <form onSubmit={handleSubmit} className="space-y-4">
                     {!isLogin && (

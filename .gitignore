@@ -1,46 +1,46 @@
-# Credentials - NEVER COMMIT THESE!
-credentials/
-*.json
-!package.json
-!package-lock.json
-!tsconfig.json
-
-# Environment variables
+# Root Environment Variables
 .env
 .env.local
 .env.*.local
 
-# IDE
+# Credentials - NEVER COMMIT THESE!
+credentials/
+*key*.json
+*credential*.json
+
+# Ignore generic JSON files at root, but explicitly allow specific ones
+/*.json
+!/package.json
+!/package-lock.json
+!/tsconfig.json
+
+# IDE / OS
 .idea/
 .vscode/
 *.swp
 *.swo
 *~
-
-# OS
 .DS_Store
 Thumbs.db
+logs/
+*.log
 
-# Spring Backend
+# Sub-projects
+# (These also have their own .gitignore files, but we list them here just in case)
 spring-backend/target/
 spring-backend/.mvn/
 spring-backend/mvnw
 spring-backend/mvnw.cmd
 
-# Python Backend
 python-backend/__pycache__/
 python-backend/*.pyc
 python-backend/.pytest_cache/
 python-backend/venv/
 python-backend/.venv/
 python-backend/chromadb_data/
+python-backend/reports/
 
-# React Frontend
 react-frontend/node_modules/
 react-frontend/dist/
 react-frontend/build/
 react-frontend/.vite/
-
-# Logs
-*.log
-logs/

@@ -82,7 +82,7 @@ const ChatPage = () => {
             }
         } catch (error) {
             console.error('Error sending query:', error);
-            toast.error('Failed to send query');
+            toast.error('There was a problem sending your question. Please check your connection and try again.');
         } finally {
             setLoading(false);
         }

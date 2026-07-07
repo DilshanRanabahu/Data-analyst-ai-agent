@@ -1,12 +1,10 @@
 """
-Vertex AI Service for Gemini 2.0 Flash integration
+AI Service for Gemini integration using Google AI Studio (generativeai)
 Handles embeddings generation and natural language query responses
 """
 
 import os
-import vertexai
-from vertexai.generative_models import GenerativeModel, Part
-from vertexai.language_models import TextEmbeddingModel
+import google.generativeai as genai
 import config
 import logging
 
@@ -16,25 +14,22 @@ logger = logging.getLogger(__name__)
 
 class VertexAIService:
     def __init__(self):
-        """Initialize Vertex AI with credentials"""
+        """Initialize Google AI Studio with API Key"""
         try:
-            # Set credentials
-            os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = config.GOOGLE_APPLICATION_CREDENTIALS
-            
-            # Initialize Vertex AI
-            vertexai.init(
-                project=config.GCP_PROJECT_ID,
-                location=config.GCP_LOCATION
-            )
+            if not config.GEMINI_API_KEY:
+                logger.warning("GEMINI_API_KEY is not set. Please add it to .env")
+                
+            # Configure generative AI
+            genai.configure(api_key=config.GEMINI_API_KEY)
             
             # Initialize models
-            self.gemini_model = GenerativeModel(config.GEMINI_MODEL)
-            self.embedding_model = TextEmbeddingModel.from_pretrained(config.EMBEDDING_MODEL)
+            self.gemini_model = genai.GenerativeModel(config.GEMINI_MODEL)
+            self.embedding_model = config.EMBEDDING_MODEL
             
-            logger.info(f"Vertex AI initialized successfully with project: {config.GCP_PROJECT_ID}")
+            logger.info("Google AI Studio initialized successfully")
             
         except Exception as e:
-            logger.error(f"Error initializing Vertex AI: {str(e)}")
+            logger.error(f"Error initializing Google AI Studio: {str(e)}")
             raise
 
     def generate_embeddings(self, texts):
@@ -58,13 +53,20 @@ class VertexAIService:
             logger.info(f"Generating embeddings for {len(texts)} texts")
             
             # Generate embeddings
-            embeddings = self.embedding_model.get_embeddings(texts)
+            result = genai.embed_content(
+                model=f"models/{self.embedding_model}",
+                content=texts,
+                task_type="retrieval_document"
+            )
             
-            # Extract vectors
-            vectors = [embedding.values for embedding in embeddings]
+            embeddings = result['embedding']
             
-            logger.info(f"Generated {len(vectors)} embeddings successfully")
-            return vectors
+            # If a single string was passed, genai might return a single list instead of a list of lists
+            if len(texts) == 1 and not isinstance(embeddings[0], list):
+                embeddings = [embeddings]
+                
+            logger.info(f"Generated {len(embeddings)} embeddings successfully")
+            return embeddings
             
         except Exception as e:
             logger.error(f"Error generating embeddings: {str(e)}")
@@ -72,7 +74,7 @@ class VertexAIService:
 
     def generate_response(self, prompt, context=None):
         """
-        Generate AI response using Gemini 2.0 Flash
+        Generate AI response using Gemini
         
         Args:
             prompt (str): User's query
@@ -98,15 +100,15 @@ IMPORTANT: If the user asks for a chart, graph, or visualization, OR if the answ
 The JSON format must be compatible with Recharts and follow this structure:
 ```json
 {{
-  "type": "bar", // options: "bar", "line", "pie", "area"
+  "type": "bar",
   "title": "Chart Title",
   "data": [
     {{ "name": "Category A", "value": 10 }},
     {{ "name": "Category B", "value": 20 }}
   ],
-  "xAxisKey": "name", // Valid key from data object for X-axis
-  "yAxisKey": "value", // Valid key from data object for Y-axis (values)
-  "colors": ["#8884d8", "#82ca9d", "#ffc658"] // Optional custom colors
+  "xAxisKey": "name",
+  "yAxisKey": "value",
+  "colors": ["#8884d8", "#82ca9d", "#ffc658"]
 }}
 ```
 
@@ -119,11 +121,8 @@ If no chart is needed, do NOT include any JSON."""
             # Generate response
             response = self.gemini_model.generate_content(full_prompt)
             
-            # Extract text from response
-            response_text = response.text
-            
             logger.info("AI response generated successfully")
-            return response_text
+            return response.text
             
         except Exception as e:
             logger.error(f"Error generating AI response: {str(e)}")
@@ -157,17 +156,17 @@ IMPORTANT: If the user asks for a chart, graph, or visualization, OR if the answ
 
 The JSON format must be compatible with Recharts and follow this structure:
 ```json
-{
-  "type": "bar", // options: "bar", "line", "pie", "area"
+{{
+  "type": "bar",
   "title": "Chart Title",
   "data": [
-    { "name": "Category A", "value": 10 },
-    { "name": "Category B", "value": 20 }
+    {{ "name": "Category A", "value": 10 }},
+    {{ "name": "Category B", "value": 20 }}
   ],
-  "xAxisKey": "name", // Valid key from data object for X-axis
-  "yAxisKey": "value", // Valid key from data object for Y-axis (values)
-  "colors": ["#8884d8", "#82ca9d", "#ffc658"] // Optional custom colors
-}
+  "xAxisKey": "name",
+  "yAxisKey": "value",
+  "colors": ["#8884d8", "#82ca9d", "#ffc658"]
+}}
 ```
 
 If no chart is needed, do NOT include any JSON."""

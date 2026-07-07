@@ -12,8 +12,8 @@ spring:
   
 firebase:
   credentials-path: ${FIREBASE_CREDENTIALS_PATH:../credentials/firebase-admin-key.json}
-  project-id: ${GCP_PROJECT_ID:data-analyst-ai-agent-c0808}
-  storage-bucket: ${FIREBASE_STORAGE_BUCKET:data-analyst-ai-agent-c0808.firebasestorage.app}
+  project-id: ${GCP_PROJECT_ID:data-analyst-ai-d233d}
+  storage-bucket: ${FIREBASE_STORAGE_BUCKET:data-analyst-ai-d233d.firebasestorage.app}
 
 python:
   service:

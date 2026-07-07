@@ -60,7 +60,7 @@ const AuthProvider = ({ children }) => {
             return user;
         } catch (error) {
             console.error('Registration error:', error);
-            toast.error(error.message || 'Failed to create account');
+            toast.error('We could not create your account. Please check your details and try again.');
             throw error;
         }
     };
@@ -72,7 +72,7 @@ const AuthProvider = ({ children }) => {
             return userCredential.user;
         } catch (error) {
             console.error('Login error:', error);
-            toast.error(error.message || 'Failed to log in');
+            toast.error('We could not log you in. Please check your credentials and try again.');
             throw error;
         }
     };
@@ -84,7 +84,7 @@ const AuthProvider = ({ children }) => {
             toast.success('Logged out successfully');
         } catch (error) {
             console.error('Logout error:', error);
-            toast.error('Failed to log out');
+            toast.error('We had trouble signing you out. Please try again.');
             throw error;
         }
     };

@@ -29,7 +29,7 @@ const DataProvider = ({ children }) => {
             setDatasets(data);
         } catch (error) {
             console.error('Error fetching datasets:', error);
-            toast.error('Failed to load datasets');
+            toast.error('We had trouble loading your files. Please refresh the page.');
         } finally {
             setLoading(false);
         }
@@ -60,13 +60,13 @@ const DataProvider = ({ children }) => {
                 await fetchDatasets(); // Refresh list
                 return response;
             } else {
-                toast.error(response.message || 'Upload failed');
+                toast.error('We could not upload your file. Please try again with a valid file.');
                 return null;
             }
         } catch (error) {
             console.error('Error uploading dataset:', error);
-            toast.error('Failed to upload dataset');
-            return null;
+            toast.error('There was a problem uploading your file. Please try again later.');
+            throw error;
         } finally {
             setLoading(false);
         }
@@ -84,7 +84,7 @@ const DataProvider = ({ children }) => {
                     setCurrentDataset(null);
                 }
             } else {
-                toast.error('Failed to delete dataset');
+                toast.error('We could not delete the file. Please try again.');
             }
         } catch (error) {
             console.error('Error deleting dataset:', error);

@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Database, FileText, Send, MessageSquare } from 'lucide-react';
+import { Database, FileText, Send, MessageSquare, Eye } from 'lucide-react';
 import ChatMessage from '../components/ChatMessage';
 import Navbar from '../components/Navbar';
+import SchemaVisualizer from '../components/SchemaVisualizer';
 import toast from 'react-hot-toast';
 
 const UnifiedChatPage = () => {
@@ -12,6 +13,7 @@ const UnifiedChatPage = () => {
     const [input, setInput] = useState('');
     const [loading, setLoading] = useState(false);
     const [loadingSources, setLoadingSources] = useState(true);
+    const [selectedDbForSchema, setSelectedDbForSchema] = useState(null);
 
     const userId = localStorage.getItem('userId') || 'default_user';
 
@@ -123,21 +125,21 @@ const UnifiedChatPage = () => {
 
             } else {
                 console.error('Query failed:', data.message);
-                toast.error(data.message || 'Query failed');
+                toast.error('We could not process your question. Please try asking it differently.');
                 // Show error in chat
                 setMessages(prev => [...prev, {
                     type: 'ai',
-                    content: `Error: ${data.message || 'Query failed'}`,
+                    content: `Sorry, I couldn't process your question. Please check your data sources or try asking it differently.`,
                     timestamp: new Date()
                 }]);
             }
         } catch (error) {
             console.error('Error processing query:', error);
-            toast.error('Error processing query: ' + error.message);
+            toast.error('There was a problem answering your question. Please try again later.');
             // Show error in chat
             setMessages(prev => [...prev, {
                 type: 'ai',
-                content: `Error: ${error.message}`,
+                content: `Sorry, there was a system problem answering your question. Please try again in a few moments.`,
                 timestamp: new Date()
             }]);
         } finally {
@@ -206,7 +208,7 @@ const UnifiedChatPage = () => {
                                             {sources.sqlDatabases.map((db) => (
                                                 <div
                                                     key={db.id}
-                                                    className="flex items-center gap-3 p-3 rounded-lg hover:bg-emerald-50 border border-transparent hover:border-emerald-200 transition-all duration-200 cursor-pointer group"
+                                                    className="flex items-center gap-3 p-3 rounded-lg hover:bg-emerald-50 border border-transparent hover:border-emerald-200 transition-all duration-200 group"
                                                 >
                                                     <div className="w-8 h-8 bg-emerald-100 rounded-lg flex items-center justify-center group-hover:bg-emerald-200 transition-colors">
                                                         <Database className="w-4 h-4 text-emerald-600" />
@@ -215,6 +217,13 @@ const UnifiedChatPage = () => {
                                                         <p className="text-sm text-gray-700 truncate font-medium group-hover:text-emerald-700 transition-colors">{db.name}</p>
                                                         <p className="text-xs text-gray-500 capitalize">{db.type}</p>
                                                     </div>
+                                                    <button 
+                                                        onClick={() => setSelectedDbForSchema(db)}
+                                                        className="p-1.5 bg-white text-emerald-600 hover:bg-emerald-600 hover:text-white rounded-md shadow-sm border border-emerald-100 transition-all opacity-0 group-hover:opacity-100"
+                                                        title="View Schema"
+                                                    >
+                                                        <Eye className="w-4 h-4" />
+                                                    </button>
                                                 </div>
                                             ))}
                                         </div>
@@ -366,6 +375,13 @@ const UnifiedChatPage = () => {
                     </div>
                 </div>
             </div>
+            
+            {/* Schema Visualizer Modal */}
+            <SchemaVisualizer 
+                isOpen={!!selectedDbForSchema} 
+                onClose={() => setSelectedDbForSchema(null)} 
+                database={selectedDbForSchema} 
+            />
         </div>
     );
 };
