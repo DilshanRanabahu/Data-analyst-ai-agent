@@ -25,7 +25,8 @@ const UnifiedChatPage = () => {
 
     const loadChatHistory = async () => {
         try {
-            const response = await fetch(`http://localhost:8080/api/chat/unified`);
+            const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080';
+            const response = await fetch(`${API_BASE_URL}/api/chat/unified`);
             if (response.ok) {
                 const history = await response.json();
                 // Convert to UI format
@@ -47,7 +48,8 @@ const UnifiedChatPage = () => {
 
     const loadSources = async () => {
         try {
-            const response = await fetch(`http://localhost:5000/api/sql/sources/${userId}`);
+            const PYTHON_API_URL = import.meta.env.VITE_PYTHON_API_URL || 'http://localhost:5000';
+            const response = await fetch(`${PYTHON_API_URL}/api/sql/sources/${userId}`);
             const data = await response.json();
 
             if (data.success) {
@@ -79,7 +81,8 @@ const UnifiedChatPage = () => {
             console.log('Sending unified query:', { userId, question: userMessage });
             console.log('Available sources:', sources);
 
-            const response = await fetch('http://localhost:5000/api/unified/query', {
+            const PYTHON_API_URL = import.meta.env.VITE_PYTHON_API_URL || 'http://localhost:5000';
+            const response = await fetch(`${PYTHON_API_URL}/api/unified/query`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
@@ -107,7 +110,8 @@ const UnifiedChatPage = () => {
 
                 // Save to Spring Backend
                 try {
-                    await fetch('http://localhost:8080/api/chat', {
+                    const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080';
+                    await fetch(`${API_BASE_URL}/api/chat`, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({
