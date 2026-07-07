@@ -22,6 +22,7 @@ services:
     environment:
       - PYTHON_SERVICE_URL=http://python-backend:5000
       - CORS_ORIGINS=http://54.198.22.75
+      - FIREBASE_CREDENTIALS_PATH=/app/credentials/firebase-admin-key.json
     volumes:
       - ./credentials:/app/credentials
     restart: always
