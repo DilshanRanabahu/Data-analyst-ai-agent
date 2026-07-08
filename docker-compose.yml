@@ -35,6 +35,7 @@ services:
       - "5000:5000"
     environment:
       - GOOGLE_APPLICATION_CREDENTIALS=/app/credentials/vertex-ai-key.json
+      - GEMINI_API_KEY=${GEMINI_API_KEY}
     volumes:
       - ./credentials:/app/credentials
     restart: always
