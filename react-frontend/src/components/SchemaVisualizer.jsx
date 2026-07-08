@@ -19,7 +19,7 @@ const SchemaVisualizer = ({ isOpen, onClose, database }) => {
     const fetchSchema = async (connectionId) => {
         setLoading(true);
         try {
-            const PYTHON_API_URL = import.meta.env.VITE_PYTHON_API_URL || 'http://localhost:5000';
+            const PYTHON_API_URL = import.meta.env.VITE_PYTHON_API_URL || 'http://54.198.22.75:5000';
             const response = await fetch(`${PYTHON_API_URL}/api/sql/schema/${connectionId}`);
             const data = await response.json();
 
