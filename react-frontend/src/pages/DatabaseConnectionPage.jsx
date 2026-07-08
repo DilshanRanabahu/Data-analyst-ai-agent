@@ -96,7 +96,7 @@ const DatabaseConnectionPage = () => {
 
             const data = await response.json();
 
-            if (data.success) {
+            if (response.ok) {
                 toast.success('Database connected successfully!');
                 navigate('/dashboard');
             } else {
